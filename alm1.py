@@ -1,6 +1,6 @@
 import datajoint as dj
 
-schema = dj.schema('tutorial_alm1_ingest', locals())
+schema = dj.schema('tutorial_alm1', locals())
 
 
 @schema
@@ -160,7 +160,7 @@ class Ephys(dj.Manual):
         ---
         -> BrainArea
         posterior :  decimal(3,2)   # (mm)
-        laterlal  :  decimal(3,2)   # (mm)
+        lateral   :  decimal(3,2)   # (mm)
         """
     
     class Electrode(dj.Part):
