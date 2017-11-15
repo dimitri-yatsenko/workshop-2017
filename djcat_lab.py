@@ -1,6 +1,6 @@
 import datajoint as dj
 
-schema = dj.schema(dj.config['names.%s' % __name__], locals())
+schema = dj.schema('tutorial_lab', locals())
 
 @schema
 class Lab(dj.Manual): 
