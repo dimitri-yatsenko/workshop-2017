@@ -1,28 +1,44 @@
 import datajoint as dj
-import djcat_lab as lab
 
 schema = dj.schema('tutorial_alm1_ingest', locals())
 
 
 @schema
+class Animal(dj.Manual):
+    definition = """
+    animal_id           : int           # Janelia institution mouse IDs
+    ---
+    species             : varchar(30)
+    date_of_birth       : date
+    """
+
+
+@schema
 class Surgery(dj.Manual):
     definition = """
-    -> lab.Subject
+    -> Animal
     --- 
     surgery : varchar(4000)    # description of surgery
     """
-    
+
 
 @schema
-class VirusInfectionSite(dj.Manual):
+class Virus(dj.Manual):
+
     definition = """
-    -> lab.Subject
-    site : tinyint  # virus infection site
-    ---
-    infection_x : decimal(3,2)   # (mm)
-    infection_y : decimal(3,2)   # (mm)
-    infection_z : decimal(3,2)   # (mm)
+    -> Animal
     """
+
+    class InfectionSite(dj.Part):
+
+        definition = """
+        -> Virus
+        site            : tinyint       # virus infection site
+        ---
+        infection_x     : decimal(3,2)  # (mm)
+        infection_y     : decimal(3,2)  # (mm)
+        infection_z     : decimal(3,2)  # (mm)
+        """
 
 
 @schema
@@ -36,13 +52,12 @@ class BrainArea(dj.Lookup):
 @schema
 class Session(dj.Manual):
     definition = """
-    -> lab.Subject
+    -> Animal
     session  : int   # session within 
     --- 
-    -> lab.Study
     session_date       : date         # session date 
     session_suffix     : char(1)      # suffix for disambiguating sessions 
-    (experimenter)     -> lab.User
+    experimenter       : varchar(60)  # experimenter
     session_start_time : datetime   
     raw_data_path      : varchar(255) # File path to raw data -- transform to external
     recording_type     : varchar(8)   # e.g. acute   
@@ -111,6 +126,7 @@ class TrialType(dj.Lookup):
     contents = zip([
         'HitR',
         'HitL',
+        'ErrL',
         'ErrR',
         'NoLickR',
         'NoLickL',
@@ -258,3 +274,4 @@ class Acquisition(dj.Imported):
         pole_in_timestamp   : decimal(7,2)   # (s)
         pole_out_timestamp  : decimal(7,2)   # (s)
         """
+
